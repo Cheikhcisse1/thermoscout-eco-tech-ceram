@@ -6,7 +6,7 @@ services:
     healthCheckPath: /healthz
     envVars:
       - key: APP_PASSWORD      # à saisir dans le tableau de bord Render (jamais dans Git)
-        sync: false
+        generateValue: true
       - key: ANTHROPIC_API_KEY # optionnel : sans clé, le calcul marche mais pas la rédaction IA
         sync: false
       - key: RATE_LIMIT_PER_HOUR
