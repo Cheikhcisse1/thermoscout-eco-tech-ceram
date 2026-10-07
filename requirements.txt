@@ -3,3 +3,6 @@ uvicorn[standard]
 httpx
 python-dotenv
 openpyxl
+streamlit
+pandas
+pydantic
