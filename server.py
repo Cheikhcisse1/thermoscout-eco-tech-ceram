@@ -17,6 +17,7 @@ from pydantic import BaseModel
 
 import engine
 import rag
+import security
 from engine import Site
 
 BASE = Path(__file__).parent
@@ -34,6 +35,7 @@ class UTF8(JSONResponse):
 
 
 app = FastAPI(title="ThermoScout", default_response_class=UTF8)
+security.install(app, ("/api/brief", "/api/email", "/api/chat", "/api/batch"))
 
 
 def ru(site: Site, res: dict) -> dict:

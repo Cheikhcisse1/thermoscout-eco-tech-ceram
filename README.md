@@ -1,4 +1,4 @@
-# ThermoScout — qualification de gisements de chaleur fatale (démo Eco Tech Ceram)
+﻿# ThermoScout — qualification de gisements de chaleur fatale (démo Eco Tech Ceram)
 
 Outil de pré-qualification : à partir du débit, de la température et des heures de fonctionnement d'un site
 industriel, il estime la puissance récupérable, l'énergie valorisée, l'économie annuelle, le CO₂ évité, le
@@ -38,3 +38,20 @@ Double-clic sur `start_thermoscout.bat`, puis http://127.0.0.1:8780
 ## Ajouter des connaissances à l'assistant
 Déposer des fichiers `.md` / `.txt` dans `knowledge/` (voir `knowledge/00_LISEZ-MOI_base_documentaire.md`).
 Ne jamais y mettre de secrets ni de données personnelles.
+
+## Déploiement en ligne (Render)
+
+> En ligne, **Ollama n'existe pas** : l'IA passe par l'API Claude (ou OpenAI) avec TA clé, qui sera facturée selon l'usage.
+> Le serveur est protégé par mot de passe et limite les requêtes par IP (voir `security.py`) : sans `APP_PASSWORD`,
+> il refuse de démarrer.
+
+1. Créer un compte sur [render.com](https://render.com) (avec ton compte GitHub).
+2. **New +** > **Blueprint** > choisir ce dépôt : Render lit `render.yaml`.
+3. Renseigner les variables demandées dans le tableau de bord Render (jamais dans Git) :
+   - `APP_PASSWORD` : le mot de passe d'accès (nom d'utilisateur libre) ;
+   - `ANTHROPIC_API_KEY` : ta clé (nécessite des crédits sur console.anthropic.com).
+4. Une fois déployé, ouvrir l'URL fournie par Render et saisir le mot de passe.
+
+Limites à connaître : le plan gratuit met le service en veille après inactivité (premier chargement lent) ;
+le disque est éphémère (les paramètres modifiés en ligne sont perdus à chaque redéploiement) ; l'image Docker n'a
+pas été testée localement par l'auteur.

@@ -115,5 +115,47 @@ class Rag(unittest.TestCase):
         self.assertEqual(C.post("/api/chat", json={"message": "x" * 1001}).status_code, 422)
 
 
+class Securite(unittest.TestCase):
+    def app(self, **env):
+        import os
+        from unittest import mock
+        from fastapi import FastAPI
+        import security
+        a = FastAPI()
+        with mock.patch.dict(os.environ, env, clear=False):
+            security.install(a, ("/api/chat",))
+
+        @a.get("/secret")
+        def secret():
+            return {"ok": 1}
+
+        @a.post("/api/chat")
+        def chat():
+            return {"ok": 1}
+        return TestClient(a)
+
+    def test_refuse_de_demarrer_sans_mot_de_passe(self):
+        import os
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"REQUIRE_AUTH": "1", "APP_PASSWORD": ""}):
+            with self.assertRaises(RuntimeError):
+                self.app(REQUIRE_AUTH="1", APP_PASSWORD="")
+
+    def test_mot_de_passe(self):
+        c = self.app(APP_PASSWORD="s3cret", REQUIRE_AUTH="")
+        self.assertEqual(c.get("/secret").status_code, 401)
+        self.assertEqual(c.get("/secret", auth=("x", "faux")).status_code, 401)
+        self.assertEqual(c.get("/secret", auth=("x", "s3cret")).status_code, 200)
+        self.assertEqual(c.get("/healthz").status_code, 200)  # sonde publique
+
+    def test_limite_de_requetes_et_en_tetes(self):
+        c = self.app(APP_PASSWORD="", REQUIRE_AUTH="", RATE_LIMIT_PER_HOUR="2")
+        self.assertEqual(c.post("/api/chat").status_code, 200)
+        self.assertEqual(c.post("/api/chat").status_code, 200)
+        r = c.post("/api/chat")
+        self.assertEqual(r.status_code, 429)
+        self.assertEqual(c.get("/secret").headers["x-frame-options"], "DENY")
+
+
 if __name__ == "__main__":
     unittest.main()
