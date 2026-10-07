@@ -1,0 +1,17 @@
+{
+  "rho_fumees": 1.29,
+  "cp_fumees": 1.1,
+  "cp_ceramique": 1.0,
+  "rendement_recup": 0.75,
+  "rendement_stockage": 0.85,
+  "rendement_chaudiere": 0.9,
+  "facteur_co2": 0.205,
+  "prix_energie": 50.0,
+  "t_rejet": 120.0,
+  "heures_tampon": 4.0,
+  "taux_mad": 10.8,
+  "capex_par_kw": null,
+  "capex_fixe": 0.0,
+  "seuil_fort": 65.0,
+  "seuil_moyen": 40.0
+}

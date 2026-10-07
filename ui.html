@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ThermoScout · Eco Tech Ceram</title>
+<style>
+:root{
+  --bg:#f3f1ec;--card:#ffffff;--tx:#1d2a27;--mut:#66736f;--bd:#e3dfd6;
+  --ac:#0f766e;--ac2:#e8590c;--ac-soft:#d9f0ec;--ko:#c0392b;--ok:#1a8f5a;--warn:#b7791f;
+  --hero1:#0b3d3a;--hero2:#0f766e;--shadow:0 1px 2px rgba(20,40,35,.06),0 8px 24px rgba(20,40,35,.06)}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0f1514;--card:#17201e;--tx:#e7efec;--mut:#8da39d;--bd:#26332f;
+  --ac:#2dd4bf;--ac2:#ff8a4c;--ac-soft:#123a35;--ko:#ff7a6b;--ok:#4ade80;--warn:#f0b84a;
+  --hero1:#06201e;--hero2:#0c4a45;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+.hero{background:linear-gradient(120deg,var(--hero1),var(--hero2));color:#fff;padding:24px 24px 84px}
+.wrap{max-width:1180px;margin:auto}
+.brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#ffb27a,#e8590c);display:grid;place-items:center;font-size:24px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.brand h1{margin:0;font-size:22px}.brand p{margin:0;opacity:.8;font-size:13.5px}
+.spacer{flex:1}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:5px 12px;border-radius:99px;font-size:13px;color:#fff}
+select.pill{appearance:none;cursor:pointer;padding-right:12px;width:auto}
+select.pill option{color:#111}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f87171;margin-right:6px}.dot.on{background:#4ade80}
+.tabs{display:flex;gap:6px;margin-top:20px;flex-wrap:wrap}
+.tab{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 16px;border-radius:99px;cursor:pointer;font-weight:600}
+.tab.act{background:#fff;color:#0b3d3a;border-color:#fff}
+main{margin-top:-56px;padding:0 24px 50px}
+.view{display:none}.view.act{display:block}
+.grid{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.card h2{margin:0 0 4px;font-size:16px}
+.sub{color:var(--mut);font-size:13px;margin:0 0 14px}
+label{display:block;font-size:12.5px;color:var(--mut);margin:11px 0 4px;font-weight:600}
+input,select,textarea,button{font:inherit;color:var(--tx)}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;outline:none;transition:border .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac-soft)}
+input.bad{border-color:var(--ko)}
+textarea{resize:vertical;min-height:170px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.unit{position:relative}.unit input{padding-right:62px}.unit span{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:12.5px;pointer-events:none}
+details{margin-top:14px;border-top:1px dashed var(--bd);padding-top:10px}
+summary{cursor:pointer;color:var(--ac);font-weight:600;font-size:13.5px}
+.btn{border:none;border-radius:11px;padding:10px 16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .2s;text-decoration:none;display:inline-block;text-align:center}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.5;cursor:wait}
+.primary{background:linear-gradient(135deg,var(--ac),#0b5d57);color:#fff}
+.block{width:100%;margin-top:16px;font-size:15px}
+.ghost{background:transparent;border:1px solid var(--bd);color:var(--tx)}
+.ghost:hover{border-color:var(--ac);color:var(--ac)}
+.good{background:var(--ok);color:#fff}
+.empty{display:grid;place-items:center;text-align:center;min-height:420px;color:var(--mut)}
+.empty .big{font-size:54px;margin-bottom:6px}
+.res{display:none}.res.show{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.top{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.gauge{width:150px;flex:none}.gauge text{fill:var(--tx)}
+.verdict h2{font-size:22px;margin:0}
+.tag{display:inline-block;padding:3px 11px;border-radius:99px;font-size:12.5px;font-weight:700;margin-bottom:6px}
+.t-hi{background:#dcf5e7;color:#127a47}.t-mid{background:#fdf0d2;color:#946200}.t-lo{background:#fde2de;color:#a83225}
+@media(prefers-color-scheme:dark){.t-hi{background:#12382a;color:#4ade80}.t-mid{background:#3b2f10;color:#f0b84a}.t-lo{background:#411d19;color:#ff7a6b}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px}
+.kpi{border:1px solid var(--bd);border-radius:13px;padding:13px 14px;background:var(--bg)}
+.kpi b{display:block;font-size:21px;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--mut);font-size:12px}.kpi.hl{background:var(--ac-soft);border-color:transparent}
+.flow{margin-top:20px}
+.bar{display:grid;grid-template-columns:150px 1fr 100px;gap:10px;align-items:center;margin:8px 0;font-size:13px}
+.bar .track{height:16px;background:var(--bg);border-radius:99px;overflow:hidden}
+.bar .fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.bar em{font-style:normal;text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+@media(max-width:560px){.bar{grid-template-columns:1fr 80px}.bar .track{grid-column:1/-1;grid-row:2}}
+.alerts{margin-top:14px;display:grid;gap:8px}
+.alert{border-left:4px solid var(--warn);background:var(--bg);padding:9px 12px;border-radius:8px;font-size:13.5px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.out{white-space:pre-wrap;margin-top:16px;border:1px solid var(--bd);border-radius:12px;padding:15px;background:var(--bg);display:none}
+.out.show{display:block}.out.err{color:var(--ko)}
+.mail{display:none;margin-top:16px;border:1px solid var(--bd);border-radius:12px;padding:15px;background:var(--bg)}
+.mail.show{display:block}
+.mail .actions{margin-top:12px}
+.hist-item{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border:1px solid var(--bd);border-radius:10px;margin-top:8px;cursor:pointer;font-size:13.5px;background:var(--card)}
+.hist-item:hover{border-color:var(--ac)}
+.note{font-size:12px;color:var(--mut);margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;color:var(--mut);font-size:12px;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--bd);font-variant-numeric:tabular-nums}
+tbody tr{cursor:pointer}tbody tr:hover{background:var(--ac-soft)}
+.scroll{overflow-x:auto}
+.drop{border:2px dashed var(--bd);border-radius:14px;padding:26px;text-align:center;color:var(--mut);cursor:pointer;transition:border .15s,background .15s}
+.drop.over,.drop:hover{border-color:var(--ac);background:var(--ac-soft)}
+.errbox{margin-top:14px;border:1px solid var(--ko);border-radius:12px;padding:12px 14px;font-size:13.5px}
+.errbox li{margin:3px 0}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 16px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+.toast.show{opacity:1}
+.chat .msgs{height:min(55vh,520px);overflow-y:auto;border:1px solid var(--bd);border-radius:14px;padding:14px;background:var(--bg);display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.msg{max-width:84%;padding:10px 14px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word;animation:in .25s ease}
+.msg.user{align-self:flex-end;background:linear-gradient(135deg,var(--ac),#0b5d57);color:#fff;border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:var(--card);border:1px solid var(--bd);border-bottom-left-radius:4px}
+.msg.err{border-color:var(--ko);color:var(--ko)}
+.msg.typing{color:var(--mut);font-style:italic}
+.src{margin-top:8px;font-size:12.5px;color:var(--mut);white-space:normal}
+.src summary{cursor:pointer;color:var(--ac);font-weight:600}
+.src div{margin-top:6px;padding:6px 8px;border-left:3px solid var(--ac);background:var(--bg);border-radius:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{border:1px solid var(--bd);background:var(--card);border-radius:99px;padding:6px 13px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--ac);color:var(--ac)}
+.cform{display:flex;gap:10px;margin-top:12px}.cform input{flex:1}
+/* proposition imprimable */
+#proposal{display:none}
+@media print{
+  body.print-proposal .hero,body.print-proposal main,body.print-proposal .toast{display:none!important}
+  body.print-proposal #proposal{display:block;color:#111;background:#fff;font:14px/1.55 "Segoe UI",system-ui,sans-serif;padding:0}
+  body:not(.print-proposal) .tabs,body:not(.print-proposal) .actions,body:not(.print-proposal) form{display:none}
+  body{background:#fff}
+}
+#proposal h1{font-size:26px;margin:0;color:#0b3d3a}#proposal h2{font-size:16px;color:#0b3d3a;border-bottom:2px solid #0f766e;padding-bottom:3px;margin:22px 0 8px}
+#proposal .ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:4px solid #e8590c;padding-bottom:10px}
+#proposal table{margin:6px 0}#proposal td,#proposal th{border:1px solid #ccc;padding:6px 10px;color:#111}
+#proposal th{background:#e6f3f1;color:#0b3d3a}
+#proposal .disc{font-size:11.5px;color:#555;margin-top:24px}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <div class="brand">
+    <div class="logo">🔥</div>
+    <div><h1>ThermoScout</h1><p>Qualification de gisements de chaleur fatale · démo pour Eco Tech Ceram</p></div>
+    <div class="spacer"></div>
+    <select class="pill" id="devise" title="Devise d'affichage"><option value="EUR">€ Euro</option><option value="MAD">DH Dirham</option></select>
+    <div class="pill" id="st"><span class="dot"></span>Connexion…</div>
+  </div>
+  <nav class="tabs">
+    <button class="tab act" data-v="v-one">Analyse d'un site</button>
+    <button class="tab" data-v="v-batch">Multi-sites (Excel / CSV)</button>
+    <button class="tab" data-v="v-chat">💬 Assistant</button>
+    <button class="tab" data-v="v-par">Paramètres</button>
+  </nav>
+</div></header>
+
+<main><div class="wrap">
+
+<!-- ===================== ANALYSE ===================== -->
+<div class="view act" id="v-one"><div class="grid">
+<section class="card">
+  <h2>Données du site</h2><p class="sub">Caractéristiques du rejet thermique.</p>
+  <form id="f" novalidate>
+    <label>Client / site</label><input id="client" value="Site industriel" maxlength="80">
+    <label>Secteur</label>
+    <select id="secteur"><option>Verre</option><option>Ciment / chaux</option><option>Métallurgie</option><option>Céramique / briques</option><option>Agroalimentaire</option><option>Chimie</option><option selected>Autre</option></select>
+    <div class="two">
+      <div><label>Débit de fumées</label><div class="unit"><input id="debit_nm3h" type="number" min="1" step="any" value="30000"><span>Nm³/h</span></div></div>
+      <div><label>Heures / an</label><div class="unit"><input id="heures_an" type="number" min="1" max="8760" step="any" value="6500"><span>h</span></div></div>
+      <div><label>T° des fumées</label><div class="unit"><input id="t_source" type="number" min="100" max="1500" step="any" value="450"><span>°C</span></div></div>
+      <div><label>T° de rejet min.</label><div class="unit"><input id="t_rejet" type="number" min="40" max="600" step="any"><span>°C</span></div></div>
+      <div><label>Tampon de stockage</label><div class="unit"><input id="heures_tampon" type="number" min="0" max="48" step="any"><span>h</span></div></div>
+      <div><label>Prix énergie évitée</label><div class="unit"><input id="prix_energie" type="number" min="1" step="any"><span class="cur-mwh">€/MWh</span></div></div>
+    </div>
+    <details>
+      <summary>Hypothèses et contact</summary>
+      <div class="two">
+        <div><label>Rendement récup.</label><div class="unit"><input id="rendement_recup" type="number" min="1" max="100"><span>%</span></div></div>
+        <div><label>Rendement stockage</label><div class="unit"><input id="rendement_stockage" type="number" min="1" max="100"><span>%</span></div></div>
+        <div><label>Rendement chaudière</label><div class="unit"><input id="rendement_chaudiere" type="number" min="1" max="100"><span>%</span></div></div>
+        <div><label>Facteur CO₂</label><div class="unit"><input id="facteur_co2" type="number" min="0" max="1" step="0.001"><span>t/MWh</span></div></div>
+      </div>
+      <label>Investissement (vide = estimé via paramètres)</label><div class="unit"><input id="capex" type="number" min="1" step="any" placeholder="optionnel"><span class="cur">€</span></div>
+      <div class="two">
+        <div><label>Nom du contact</label><input id="contact_nom" maxlength="80"></div>
+        <div><label>E-mail du contact</label><input id="contact_email" type="email" maxlength="120"></div>
+      </div>
+    </details>
+    <button class="btn primary block" id="go" type="submit">Analyser le gisement</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="empty" id="empty"><div><div class="big">♨️</div><b>Aucune analyse pour l'instant</b><p>Renseigne les données du site puis lance l'analyse.</p></div></div>
+  <div class="res" id="res">
+    <div class="top">
+      <svg class="gauge" viewBox="0 0 120 120" id="gauge" aria-label="Score"></svg>
+      <div class="verdict"><span class="tag" id="tag"></span><h2 id="vtitle"></h2><p class="sub" id="vsub"></p></div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="flow" id="flow"></div>
+    <div class="alerts" id="alerts"></div>
+    <div class="actions">
+      <button class="btn primary" id="brief-btn">✨ Synthèse commerciale</button>
+      <button class="btn ghost" id="mail-btn">✉️ Mail de prospection</button>
+      <button class="btn ghost" id="pdf-btn">📄 Proposition PDF</button>
+      <button class="btn ghost" id="copy">Copier les chiffres</button>
+    </div>
+    <div class="out" id="brief"></div>
+    <div class="mail" id="mail">
+      <h2 style="font-size:15px;margin:0 0 6px">Brouillon de mail — à relire avant envoi</h2>
+      <label>Destinataire</label><input id="m-to" type="email" placeholder="adresse e-mail">
+      <label>Objet</label><input id="m-sub">
+      <label>Message</label><textarea id="m-body"></textarea>
+      <div class="actions">
+        <button class="btn good" id="m-ok">✅ Valider et ouvrir dans ma messagerie</button>
+        <button class="btn ghost" id="m-regen">Régénérer</button>
+        <button class="btn ghost" id="m-copy">Copier</button>
+      </div>
+      <p class="note" style="margin-top:8px">Rien n'est envoyé automatiquement : le bouton ouvre ton application de messagerie avec le texte, et c'est toi qui envoies.</p>
+    </div>
+    <p class="note">Estimations indicatives issues de formules thermiques simples et des paramètres de l'onglet « Paramètres ». Elles ne remplacent pas une étude d'ingénierie.</p>
+  </div>
+  <div id="hist-box" style="display:none;margin-top:22px"><h2>Analyses récentes</h2><div id="hist"></div></div>
+</section>
+</div></div>
+
+<!-- ===================== BATCH ===================== -->
+<div class="view" id="v-batch">
+  <section class="card">
+    <h2>Analyse de plusieurs sites</h2>
+    <p class="sub">Charge un fichier Excel (.xlsx) ou CSV : tous les sites sont calculés et classés par potentiel (max 500 lignes, 2 Mo).</p>
+    <div class="drop" id="drop"><b>Glisse ton fichier ici</b> ou clique pour le choisir<input id="file" type="file" accept=".xlsx,.xlsm,.csv,.txt" hidden></div>
+    <div class="actions"><a class="btn ghost" href="/api/template.xlsx">⬇️ Télécharger le modèle Excel</a></div>
+    <div id="b-res" style="display:none">
+      <div class="kpis" id="b-kpis"></div>
+      <div class="actions"><button class="btn primary" id="b-export">⬇️ Exporter le classement (Excel)</button></div>
+      <div class="scroll" style="margin-top:14px"><table><thead><tr><th>#</th><th>Client</th><th>Secteur</th><th>Score</th><th>Niveau</th><th>kW récup.</th><th>MWh/an</th><th class="cur-h">Économie</th><th>CO₂ t/an</th></tr></thead><tbody id="b-body"></tbody></table></div>
+      <p class="note">Clique sur une ligne pour ouvrir le détail, générer le mail ou la proposition.</p>
+      <div id="b-err"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== CHAT RAG ===================== -->
+<div class="view" id="v-chat">
+  <section class="card chat">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline">
+      <div><h2>Assistant Eco Tech Ceram</h2><p class="sub">Pose tes questions sur Eco-Stock, la chaleur fatale ou l'utilisation de ThermoScout. Les réponses viennent de la base documentaire, avec les sources.</p></div>
+      <button class="btn ghost" id="c-clear" style="padding:6px 12px">Nouvelle conversation</button>
+    </div>
+    <div class="msgs" id="msgs" aria-live="polite"></div>
+    <div class="chips" id="chips"></div>
+    <form class="cform" id="cform">
+      <input id="cin" maxlength="1000" placeholder="Ex. : Qu'est-ce qu'Eco-Stock ?" autocomplete="off">
+      <button class="btn primary" id="csend" type="submit">Envoyer</button>
+    </form>
+    <p class="note" id="kbinfo"></p>
+  </section>
+</div>
+
+<!-- ===================== PARAMETRES ===================== -->
+<div class="view" id="v-par">
+  <section class="card">
+    <h2>Paramètres du moteur de calcul</h2>
+    <p class="sub">Remplace ces valeurs génériques par les vraies données d'Eco Tech Ceram (rendements, coûts Eco-Stock…). Elles s'appliquent à toutes les analyses.</p>
+    <div class="pgrid" id="pgrid"></div>
+    <div class="actions"><button class="btn primary" id="p-save">💾 Enregistrer</button><button class="btn ghost" id="p-reset">Rétablir les valeurs par défaut</button></div>
+  </section>
+</div>
+
+</div></main>
+
+<div id="proposal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(n,d=0)=>n==null?'—':Number(n).toLocaleString('fr-FR',{maximumFractionDigits:d});
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)};
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+async function api(url,opt={}){
+  let r;try{r=await fetch(url,opt)}catch{throw new Error('Serveur injoignable. Vérifie que ThermoScout tourne.')}
+  let j=null;try{j=await r.json()}catch{}
+  if(!r.ok){const d=j&&j.detail;throw new Error(Array.isArray(d)?d.map(x=>(x.loc||[]).slice(-1)+' : '+x.msg).join(' · '):d||('Erreur '+r.status))}
+  return j;
+}
+/* ---------- devise ---------- */
+let PARAMS={},SCHEMA={},DEV=store.get('ts_dev','EUR');
+const rate=()=>DEV==='MAD'?(PARAMS.taux_mad||10.8):1;
+const sym=()=>DEV==='MAD'?'DH':'€';
+const money=eur=>eur==null?'—':fmt(eur*rate())+' '+sym();
+function applyDevise(){
+  document.querySelectorAll('.cur').forEach(e=>e.textContent=sym());
+  document.querySelectorAll('.cur-mwh').forEach(e=>e.textContent=sym()+'/MWh');
+  document.querySelectorAll('.cur-h').forEach(e=>e.textContent='Économie ('+sym()+'/an)');
+  $('devise').value=DEV;
+}
+$('devise').onchange=()=>{
+  const old=rate();DEV=$('devise').value;store.set('ts_dev',DEV);const k=rate()/old;
+  ['prix_energie','capex'].forEach(f=>{const v=+$(f).value;if(v)$(f).value=Math.round(v*k*100)/100});
+  applyDevise();if(last)render(last.site,last.res);if(batch)drawBatch();
+};
+/* ---------- navigation ---------- */
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab,.view').forEach(e=>e.classList.remove('act'));
+  b.classList.add('act');$(b.dataset.v).classList.add('act');
+});
+/* ---------- paramètres ---------- */
+const PCTK=['rendement_recup','rendement_stockage','rendement_chaudiere'];
+const FILL=['t_rejet','heures_tampon','prix_energie','rendement_recup','rendement_stockage','rendement_chaudiere','facteur_co2'];
+function fillForm(force){
+  FILL.forEach(f=>{const el=$(f);if(!force&&el.value!=='')return;const v=PARAMS[f];
+    el.value=PCTK.includes(f)?Math.round(v*100):f==='prix_energie'?Math.round(v*rate()*100)/100:v});
+}
+function drawParams(){
+  $('pgrid').innerHTML=Object.entries(SCHEMA).map(([k,s])=>{
+    const v=PARAMS[k],pc=PCTK.includes(k);
+    return `<div><label>${esc(s.label)} <span style="font-weight:400">(${pc?'%':esc(s.unit)})</span></label><input data-p="${k}" type="number" step="any" value="${v==null?'':pc?Math.round(v*100):v}"></div>`}).join('');
+}
+async function loadParams(){
+  const j=await api('/api/params');PARAMS=j.params;SCHEMA=j.schema;drawParams();applyDevise();fillForm(true);
+}
+$('p-save').onclick=async()=>{
+  const body={};document.querySelectorAll('[data-p]').forEach(i=>{const k=i.dataset.p;body[k]=i.value===''?null:(PCTK.includes(k)?Number(i.value)/100:Number(i.value))});
+  try{const j=await api('/api/params',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});PARAMS=j.params;drawParams();fillForm(true);toast('Paramètres enregistrés');}
+  catch(e){toast(e.message)}
+};
+$('p-reset').onclick=async()=>{
+  if(!confirm('Rétablir toutes les valeurs par défaut ?'))return;
+  try{const j=await api('/api/params/reset',{method:'POST'});PARAMS=j.params;drawParams();fillForm(true);toast('Valeurs par défaut rétablies')}catch(e){toast(e.message)}
+};
+/* ---------- analyse ---------- */
+let last=null,batch=null;
+const FIELDS=['client','secteur','debit_nm3h','t_source','t_rejet','heures_an','heures_tampon','prix_energie','rendement_recup','rendement_stockage','rendement_chaudiere','facteur_co2','capex','contact_nom','contact_email'];
+const TXT=['client','secteur','contact_nom','contact_email'];
+function payload(){
+  const p={};
+  FIELDS.forEach(f=>{
+    const v=$(f).value.trim();
+    if(TXT.includes(f)){if(v)p[f]=v;return}
+    if(v==='')return;
+    let n=Number(v);
+    if(PCTK.includes(f))n/=100;
+    if(f==='prix_energie'||f==='capex')n/=rate();
+    p[f]=n;
+  });
+  return p;
+}
+function validate(){
+  FIELDS.forEach(f=>$(f).classList.remove('bad'));
+  let ok=true;
+  ['debit_nm3h','t_source','heures_an'].forEach(f=>{if(!(+$(f).value>0)){$(f).classList.add('bad');ok=false}});
+  if(!ok){toast('Vérifie les champs en rouge');return false}
+  if($('t_rejet').value!==''&&+$('t_source').value<=+$('t_rejet').value){$('t_source').classList.add('bad');$('t_rejet').classList.add('bad');toast('La T° des fumées doit dépasser la T° de rejet');return false}
+  return true;
+}
+$('f').addEventListener('submit',async e=>{
+  e.preventDefault();if(!validate())return;
+  const b=$('go');b.disabled=true;b.textContent='Analyse en cours…';
+  try{
+    const site=payload();
+    const res=await api('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(site)});
+    last={site,res};render(site,res);saveHist(site,res);
+  }catch(err){toast('Erreur : '+err.message)}
+  b.disabled=false;b.textContent='Analyser le gisement';
+});
+function gauge(score,cls){
+  const R=48,C=2*Math.PI*R,off=C*(1-score/100),col=cls==='hi'?'var(--ok)':cls==='mid'?'var(--warn)':'var(--ko)';
+  $('gauge').innerHTML=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--bd)" stroke-width="11"/>
+  <circle cx="60" cy="60" r="${R}" fill="none" stroke="${col}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .9s ease" id="arc"/>
+  <text x="60" y="60" text-anchor="middle" font-size="30" font-weight="800">${score}</text><text x="60" y="78" text-anchor="middle" font-size="10" opacity=".7">/ 100</text>`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>$('arc')&&$('arc').setAttribute('stroke-dashoffset',off)));
+}
+const cls=r=>r.score>=(PARAMS.seuil_fort||65)?'hi':r.score>=(PARAMS.seuil_moyen||40)?'mid':'lo';
+function render(s,r){
+  $('empty').style.display='none';$('res').classList.add('show');
+  ['brief','mail'].forEach(i=>$(i).classList.remove('show'));
+  const c=cls(r);
+  $('tag').textContent=r.niveau;$('tag').className='tag t-'+c;
+  $('vtitle').textContent=s.client||'Site industriel';
+  $('vsub').textContent=`${s.secteur||'Autre'} · ${fmt(s.debit_nm3h)} Nm³/h à ${s.t_source} °C · ${fmt(s.heures_an)} h/an`;
+  gauge(r.score,c);
+  const K=[['Puissance récupérable',fmt(r.p_recup_kw)+' kW','sur '+fmt(r.p_dispo_kw)+' kW disponibles',1],
+    ['Chaleur valorisée',fmt(r.e_valo_mwh)+' MWh/an','après pertes de stockage',0],
+    ['Économie annuelle',money(r.gain_eur),'énergie évitée '+fmt(r.e_evitee_mwh)+' MWh',1],
+    ['CO₂ évité',fmt(r.co2_t)+' t/an','',0],
+    ['Stockage tampon',fmt(r.stock_mwh,2)+' MWh','≈ '+fmt(r.masse_ceramique_t,1)+' t de céramique',0],
+    ['Retour sur invest.',r.payback_ans==null?'—':fmt(r.payback_ans,1)+' ans',r.capex_eur?'invest. '+r.capex_source+' : '+money(r.capex_eur):'renseigne un investissement',0]];
+  $('kpis').innerHTML=K.map(k=>`<div class="kpi ${k[3]?'hl':''}"><small>${k[0]}</small><b>${k[1]}</b><small>${k[2]}</small></div>`).join('');
+  const mx=r.e_dispo_mwh||1,B=[['Chaleur disponible',r.e_dispo_mwh,'var(--mut)'],['Chaleur récupérée',r.e_recup_mwh,'var(--ac)'],['Chaleur valorisée',r.e_valo_mwh,'var(--ac2)']];
+  $('flow').innerHTML='<h2 style="font-size:15px;margin:0 0 6px">Flux énergétique annuel</h2>'+B.map(b=>`<div class="bar"><span>${b[0]}</span><div class="track"><div class="fill" style="width:0;background:${b[2]}" data-w="${b[1]/mx*100}"></div></div><em>${fmt(b[1])} MWh</em></div>`).join('');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%')));
+  $('alerts').innerHTML=r.alertes.map(a=>`<div class="alert">⚠️ ${esc(a)}</div>`).join('');
+}
+function saveHist(s,r){const h=store.get('ts_hist',[]);h.unshift({site:s,res:r});store.set('ts_hist',h.slice(0,8));drawHist()}
+function drawHist(){
+  const h=store.get('ts_hist',[]);$('hist-box').style.display=h.length?'block':'none';
+  $('hist').innerHTML=h.map((x,i)=>`<div class="hist-item" data-i="${i}"><b>${esc(x.site.client)}</b><span>${fmt(x.res.p_recup_kw)} kW · score ${x.res.score}</span></div>`).join('');
+  document.querySelectorAll('.hist-item').forEach(el=>el.onclick=()=>openSite(store.get('ts_hist',[])[el.dataset.i]));
+}
+function openSite(x){
+  FIELDS.forEach(f=>{const v=x.site[f];if(v==null){if(!FILL.includes(f))$(f).value='';return}
+    $(f).value=PCTK.includes(f)?Math.round(v*100):(f==='prix_energie'||f==='capex')?Math.round(v*rate()*100)/100:v});
+  last=x;render(x.site,x.res);
+  document.querySelector('[data-v=v-one]').click();scrollTo({top:0,behavior:'smooth'});
+}
+/* ---------- synthèse / mail / PDF ---------- */
+async function llmCall(url,btn,label){
+  btn.disabled=true;btn.textContent='Rédaction en cours…';
+  try{return await api(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({site:last.site,resultats:last.res})})}
+  finally{btn.disabled=false;btn.textContent=label}
+}
+$('brief-btn').onclick=async()=>{
+  if(!last)return;const o=$('brief');o.className='out show';o.textContent="L'agent rédige la synthèse (jusqu'à 1–2 min en local)…";
+  try{o.textContent=(await llmCall('/api/brief',$('brief-btn'),'✨ Synthèse commerciale')).brief}
+  catch(e){o.className='out show err';o.textContent='Synthèse indisponible : '+e.message+'\nLes résultats chiffrés restent valables.'}
+};
+async function genMail(){
+  if(!last)return;const m=$('mail');m.classList.add('show');
+  $('m-sub').value='';$('m-body').value="L'agent rédige le brouillon (jusqu'à 1–2 min en local)…";
+  $('m-to').value=last.site.contact_email||'';
+  try{const j=await llmCall('/api/email',$('mail-btn'),'✉️ Mail de prospection');$('m-sub').value=j.subject;$('m-body').value=j.body;if(j.to)$('m-to').value=j.to}
+  catch(e){$('m-body').value='';toast('Mail indisponible : '+e.message)}
+}
+$('mail-btn').onclick=genMail;$('m-regen').onclick=genMail;
+$('m-copy').onclick=()=>navigator.clipboard.writeText('Objet : '+$('m-sub').value+'\n\n'+$('m-body').value).then(()=>toast('Copié'),()=>toast('Copie impossible'));
+$('m-ok').onclick=()=>{
+  const to=$('m-to').value.trim(),sub=$('m-sub').value.trim(),body=$('m-body').value.trim();
+  if(!body||!sub){toast('Le message est vide');return}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)){toast("Renseigne une adresse e-mail valide");$('m-to').focus();return}
+  if(!confirm('Ouvrir ce message dans ta messagerie, destiné à '+to+' ?'))return;
+  let url='mailto:'+to+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
+  if(url.length>1800){navigator.clipboard.writeText(body).catch(()=>{});url='mailto:'+to+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent('(Colle ici le message — il est dans ton presse-papiers)');toast('Message trop long : copié dans le presse-papiers')}
+  location.href=url;
+};
+$('copy').onclick=()=>{
+  if(!last)return;const r=last.res,s=last.site;
+  navigator.clipboard.writeText(`ThermoScout — ${s.client}\nScore ${r.score}/100 (${r.niveau})\nPuissance récupérable : ${fmt(r.p_recup_kw)} kW\nChaleur valorisée : ${fmt(r.e_valo_mwh)} MWh/an\nÉconomie : ${money(r.gain_eur)}/an\nCO2 évité : ${fmt(r.co2_t)} t/an`).then(()=>toast('Copié'),()=>toast('Copie impossible'));
+};
+$('pdf-btn').onclick=()=>{
+  if(!last)return;const r=last.res,s=last.site,d=new Date().toLocaleDateString('fr-FR');
+  const brief=$('brief').classList.contains('show')&&!$('brief').classList.contains('err')?$('brief').textContent:'';
+  $('proposal').innerHTML=`<div class="ph"><div><h1>Pré-étude de valorisation de chaleur fatale</h1><div>${esc(s.client)} · ${esc(s.secteur||'')}</div></div><div>${d}</div></div>
+  <h2>Données d'entrée</h2><table><tr><th>Débit de fumées</th><td>${fmt(s.debit_nm3h)} Nm³/h</td><th>Température des fumées</th><td>${s.t_source} °C</td></tr>
+  <tr><th>Fonctionnement</th><td>${fmt(s.heures_an)} h/an</td><th>Rejet minimal</th><td>${s.t_rejet??PARAMS.t_rejet} °C</td></tr></table>
+  <h2>Potentiel estimé — ${esc(r.niveau)} (score ${r.score}/100)</h2>
+  <table><tr><th>Puissance récupérable</th><td>${fmt(r.p_recup_kw)} kW</td><th>Chaleur valorisée</th><td>${fmt(r.e_valo_mwh)} MWh/an</td></tr>
+  <tr><th>Économie annuelle</th><td>${money(r.gain_eur)}</td><th>CO₂ évité</th><td>${fmt(r.co2_t)} t/an</td></tr>
+  <tr><th>Stockage tampon</th><td>${fmt(r.stock_mwh,2)} MWh (≈ ${fmt(r.masse_ceramique_t,1)} t)</td><th>Retour sur investissement</th><td>${r.payback_ans==null?'à déterminer':fmt(r.payback_ans,1)+' ans'}</td></tr></table>
+  ${r.alertes.length?'<h2>Points d\'attention</h2><ul>'+r.alertes.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul>':''}
+  ${brief?'<h2>Synthèse</h2><div style="white-space:pre-wrap">'+esc(brief)+'</div>':''}
+  <p class="disc">Document indicatif généré par ThermoScout à partir de formules thermiques simples et d'hypothèses génériques. Les valeurs sont des estimations à confirmer par une visite de site et une étude d'ingénierie ; elles ne constituent ni un devis ni un engagement de performance.</p>`;
+  document.body.classList.add('print-proposal');
+  const done=()=>{document.body.classList.remove('print-proposal');removeEventListener('afterprint',done)};
+  addEventListener('afterprint',done);print();
+};
+/* ---------- multi-sites ---------- */
+const drop=$('drop');
+drop.onclick=()=>$('file').click();
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};
+drop.ondragleave=()=>drop.classList.remove('over');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');if(e.dataTransfer.files[0])upload(e.dataTransfer.files[0])};
+$('file').onchange=e=>{if(e.target.files[0])upload(e.target.files[0]);e.target.value=''};
+async function upload(f){
+  if(f.size>2*1024*1024){toast('Fichier trop volumineux (max 2 Mo)');return}
+  drop.firstChild.textContent='Analyse de '+f.name+'… ';
+  try{batch=await api('/api/batch?filename='+encodeURIComponent(f.name),{method:'POST',body:await f.arrayBuffer()});drawBatch();toast(batch.summary.sites+' site(s) analysé(s)')}
+  catch(e){toast(e.message)}
+  drop.firstChild.textContent='Glisse ton fichier ici ';
+}
+function drawBatch(){
+  const b=batch,s=b.summary;$('b-res').style.display='block';
+  const K=[['Sites analysés',s.sites],['Fort potentiel',s.forts],['Puissance récupérable',fmt(s.p_recup_kw)+' kW'],['Économie cumulée',money(s.gain_eur)+'/an'],['CO₂ évité cumulé',fmt(s.co2_t)+' t/an']];
+  $('b-kpis').innerHTML=K.map(k=>`<div class="kpi hl"><small>${k[0]}</small><b>${k[1]}</b></div>`).join('');
+  $('b-body').innerHTML=b.rows.map((r,i)=>`<tr data-i="${i}"><td>${i+1}</td><td><b>${esc(r.site.client)}</b></td><td>${esc(r.site.secteur)}</td><td><span class="tag t-${cls(r.res)}" style="margin:0">${r.res.score}</span></td><td>${esc(r.res.niveau)}</td><td>${fmt(r.res.p_recup_kw)}</td><td>${fmt(r.res.e_valo_mwh)}</td><td>${money(r.res.gain_eur)}</td><td>${fmt(r.res.co2_t)}</td></tr>`).join('');
+  document.querySelectorAll('#b-body tr').forEach(tr=>tr.onclick=()=>openSite(batch.rows[tr.dataset.i]));
+  $('b-err').innerHTML=b.errors.length?`<div class="errbox"><b>${b.errors.length} ligne(s) ignorée(s) :</b><ul>${b.errors.map(e=>`<li>Ligne ${e.ligne} (${esc(e.client)}) : ${esc(e.erreur)}</li>`).join('')}</ul></div>`:'';
+  applyDevise();
+}
+$('b-export').onclick=async()=>{
+  if(!batch)return;
+  try{
+    const r=await fetch('/api/batch/export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rows:batch.rows,devise:DEV})});
+    if(!r.ok)throw new Error('Export impossible');
+    const a=document.createElement('a');a.href=URL.createObjectURL(await r.blob());a.download='classement_sites.xlsx';a.click();URL.revokeObjectURL(a.href);
+  }catch(e){toast(e.message)}
+};
+/* ---------- chat RAG ---------- */
+let HIST=[],busy=false;
+const SUGG=["Qu'est-ce qu'Eco-Stock ?","Comment fonctionne le score de potentiel ?","Quels sites sont les plus intéressants ?","Comment importer plusieurs sites ?","Le mail est-il envoyé automatiquement ?"];
+function addMsg(role,text,extra){
+  const d=document.createElement('div');d.className='msg '+role;d.textContent=text;
+  if(extra&&extra.sources&&extra.sources.length){
+    const s=document.createElement('details');s.className='src';
+    s.innerHTML='<summary>Sources ('+extra.sources.length+')</summary>'+extra.sources.map(x=>`<div><b>[${x.n}] ${esc(x.file)}</b> — ${esc(x.title)}<br>${esc(x.extrait)}…</div>`).join('');
+    d.appendChild(s);
+  }
+  $('msgs').appendChild(d);$('msgs').scrollTop=$('msgs').scrollHeight;return d;
+}
+function resetChat(){
+  HIST=[];$('msgs').innerHTML='';
+  addMsg('bot',"Bonjour ! Je suis l'assistant d'Eco Tech Ceram. Je peux répondre sur Eco-Stock, la chaleur fatale et l'utilisation de ThermoScout, en citant mes sources. Quelle est ta question ?");
+  $('chips').innerHTML=SUGG.map(q=>`<button type="button" class="chip">${esc(q)}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{$('cin').value=c.textContent;$('cform').requestSubmit()});
+}
+$('c-clear').onclick=resetChat;
+$('cform').addEventListener('submit',async e=>{
+  e.preventDefault();if(busy)return;
+  const q=$('cin').value.trim();if(!q)return;
+  $('cin').value='';$('chips').innerHTML='';busy=true;$('csend').disabled=true;
+  addMsg('user',q);const m=addMsg('bot typing','Recherche dans la base documentaire…');
+  let text='',sources=[],failed=null;
+  try{
+    const r=await fetch('/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,history:HIST.slice(-6)})});
+    if(!r.ok){let j=null;try{j=await r.json()}catch{}throw new Error((j&&j.detail)||('Erreur '+r.status))}
+    const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+    while(true){
+      const {value,done}=await rd.read();if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      let i;while((i=buf.indexOf('\n'))>=0){
+        const ln=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!ln)continue;
+        const o=JSON.parse(ln);
+        if(o.sources)sources=o.sources;
+        if(o.t){text+=o.t;m.className='msg bot';m.textContent=text;$('msgs').scrollTop=$('msgs').scrollHeight}
+        if(o.error)failed=o.error;
+      }
+    }
+  }catch(err){failed=err.message}
+  if(failed){
+    if(text){m.textContent=text+'\n\n⚠️ Réponse interrompue : '+failed}
+    else{m.className='msg bot err';m.textContent='Désolé, une erreur est survenue : '+failed}
+  }else{
+    m.className='msg bot';m.textContent=text.trim();
+    if(sources.length){const s=document.createElement('details');s.className='src';
+      s.innerHTML='<summary>Sources ('+sources.length+')</summary>'+sources.map(x=>`<div><b>[${x.n}] ${esc(x.file)}</b> — ${esc(x.title)}<br>${esc(x.extrait)}…</div>`).join('');m.appendChild(s)}
+    HIST.push({role:'user',content:q},{role:'assistant',content:text.trim()});
+  }
+  busy=false;$('csend').disabled=false;$('cin').focus();
+});
+async function kbInfo(){
+  try{const j=await api('/api/kb');$('kbinfo').textContent='Base documentaire : '+j.files.length+' document(s), '+j.files.reduce((a,f)=>a+f.passages,0)+' passages. Pour ajouter des connaissances, dépose des fichiers .md ou .txt dans le dossier « knowledge ».'}catch{}
+}
+resetChat();kbInfo();
+/* ---------- statut ---------- */
+async function ping(){
+  try{const j=await(await fetch('/health')).json();$('st').innerHTML='<span class="dot on"></span>En ligne · IA : '+esc(j.provider)}
+  catch{$('st').innerHTML='<span class="dot"></span>Hors ligne'}
+}
+ping();setInterval(ping,15000);drawHist();applyDevise();
+loadParams().catch(e=>toast(e.message));
+</script>
+</body>
+</html>
