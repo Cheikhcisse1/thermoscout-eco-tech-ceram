@@ -4,6 +4,7 @@
 - REQUIRE_AUTH=1 (positionné dans le Dockerfile) : le serveur REFUSE de démarrer sans APP_PASSWORD.
 - RATE_LIMIT_PER_HOUR : nombre max. de requêtes « coûteuses » (IA, import) par IP et par heure. Actif en ligne
   (REQUIRE_AUTH=1) ou si la variable est définie ; désactivé en usage local.
+- PUBLIC_MODE=1 : démo ouverte à tous, sans mot de passe (la limite par IP reste active).
 - /healthz reste public (sonde de l'hébergeur) et ne révèle rien.
 """
 import base64
@@ -30,7 +31,8 @@ def _authorized(request: Request, password: str) -> bool:
 
 def install(app, limited_prefixes: tuple[str, ...]):
     password = os.getenv("APP_PASSWORD", "")
-    if os.getenv("REQUIRE_AUTH") == "1" and not password:
+    public = os.getenv("PUBLIC_MODE") == "1"
+    if os.getenv("REQUIRE_AUTH") == "1" and not password and not public:
         raise RuntimeError("APP_PASSWORD est obligatoire en déploiement (REQUIRE_AUTH=1).")
     limit_on = os.getenv("REQUIRE_AUTH") == "1" or bool(os.getenv("RATE_LIMIT_PER_HOUR"))
     limit = int(os.getenv("RATE_LIMIT_PER_HOUR", "30"))

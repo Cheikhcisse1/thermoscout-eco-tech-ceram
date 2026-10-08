@@ -5,9 +5,11 @@ services:
     plan: free
     healthCheckPath: /healthz
     envVars:
-      - key: APP_PASSWORD      # à saisir dans le tableau de bord Render (jamais dans Git)
-        generateValue: true
-      - key: ANTHROPIC_API_KEY # optionnel : sans clé, le calcul marche mais pas la rédaction IA
+      - key: PUBLIC_MODE         # démo ouverte à tous, sans mot de passe, paramètres en lecture seule
+        value: "1"
+      - key: DEFAULT_PROVIDER
+        value: gemini
+      - key: GEMINI_API_KEY      # clé gratuite (aistudio.google.com/apikey), à saisir dans Render, jamais dans Git
         sync: false
-      - key: RATE_LIMIT_PER_HOUR
-        value: "30"
+      - key: RATE_LIMIT_PER_HOUR # requêtes IA / imports max par visiteur et par heure
+        value: "20"

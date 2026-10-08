@@ -39,19 +39,16 @@ Double-clic sur `start_thermoscout.bat`, puis http://127.0.0.1:8780
 Déposer des fichiers `.md` / `.txt` dans `knowledge/` (voir `knowledge/00_LISEZ-MOI_base_documentaire.md`).
 Ne jamais y mettre de secrets ni de données personnelles.
 
-## Déploiement en ligne (Render)
+## Déploiement en ligne (Render, démo publique gratuite)
 
-> En ligne, **Ollama n'existe pas** : l'IA passe par l'API Claude (ou OpenAI) avec TA clé, qui sera facturée selon l'usage.
-> Le serveur est protégé par mot de passe et limite les requêtes par IP (voir `security.py`) : sans `APP_PASSWORD`,
-> il refuse de démarrer.
+La démo en ligne est **ouverte à tous, sans mot de passe**, et utilise l'IA **gratuite** Google Gemini (Ollama n'existe pas en ligne).
+Garde-fous du mode public (`PUBLIC_MODE=1`) : fournisseur d'IA imposé (Gemini), limite de requêtes par visiteur et par heure (`RATE_LIMIT_PER_HOUR`), taille des textes plafonnée, aucune action serveur sensible (envoi de mail ou modification des paramètres partagés désactivés).
 
-1. Créer un compte sur [render.com](https://render.com) (avec ton compte GitHub).
-2. **New +** > **Blueprint** > choisir ce dépôt : Render lit `render.yaml`.
-3. Renseigner les variables demandées dans le tableau de bord Render (jamais dans Git) :
-   - `APP_PASSWORD` : le mot de passe d'accès (nom d'utilisateur libre) ;
-   - `ANTHROPIC_API_KEY` : ta clé (nécessite des crédits sur console.anthropic.com).
-4. Une fois déployé, ouvrir l'URL fournie par Render et saisir le mot de passe.
+1. Créer une clé gratuite sur https://aistudio.google.com/apikey.
+2. Créer un compte sur render.com (avec ton compte GitHub).
+3. **New + > Blueprint** > choisir ce dépôt : Render lit `render.yaml`.
+4. Coller la clé dans la variable `GEMINI_API_KEY` du tableau de bord Render (jamais dans Git).
+5. Ouvrir l'URL fournie par Render.
 
-Limites à connaître : le plan gratuit met le service en veille après inactivité (premier chargement lent) ;
-le disque est éphémère (les paramètres modifiés en ligne sont perdus à chaque redéploiement) ; l'image Docker n'a
-pas été testée localement par l'auteur.
+Limites : le plan gratuit met le service en veille après inactivité (premier chargement d'environ 1 minute) ; le quota gratuit de Gemini est limité par jour.
+Pour un accès privé avec Claude à la place : retirer `PUBLIC_MODE`, définir `APP_PASSWORD` et `ANTHROPIC_API_KEY`.

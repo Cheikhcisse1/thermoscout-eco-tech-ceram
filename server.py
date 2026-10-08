@@ -28,6 +28,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
                               logging.StreamHandler()])
 log = logging.getLogger("thermoscout")
 MAX_UPLOAD = 2 * 1024 * 1024
+# Démo publique : sans mot de passe, IA gratuite Gemini imposée, paramètres partagés en lecture seule.
+PUBLIC_MODE = os.getenv("PUBLIC_MODE") == "1"
+PUBLIC_RO = "Démo publique : les paramètres sont en lecture seule. Installe ThermoScout en local pour les modifier."
+
+
+def provider_of(p: str | None) -> str:
+    return "gemini" if PUBLIC_MODE else (p or os.getenv("DEFAULT_PROVIDER", "ollama"))
 
 
 class UTF8(JSONResponse):
@@ -50,6 +57,8 @@ def get_params():
 
 @app.put("/api/params")
 def put_params(new: dict):
+    if PUBLIC_MODE:
+        raise HTTPException(403, PUBLIC_RO)
     try:
         p = engine.save_params(new)
     except ValueError as e:
@@ -60,6 +69,8 @@ def put_params(new: dict):
 
 @app.post("/api/params/reset")
 def reset_params():
+    if PUBLIC_MODE:
+        raise HTTPException(403, PUBLIC_RO)
     return {"params": engine.save_params(dict(engine.DEFAULTS))}
 
 
@@ -160,9 +171,26 @@ def export(e: ExportIn):
 
 # ------------------------------------------------------------ rédaction LLM
 async def llm(prompt: str, system: str, provider: str | None, max_tokens: int = 1500) -> str:
-    provider = provider or os.getenv("DEFAULT_PROVIDER", "ollama")
+    provider = provider_of(provider)
     try:
         async with httpx.AsyncClient(timeout=240) as c:
+            if provider == "gemini":
+                key = os.getenv("GEMINI_API_KEY")
+                if not key:
+                    raise HTTPException(503, "GEMINI_API_KEY manquante")
+                r = await c.post(f"https://generativelanguage.googleapis.com/v1beta/models/"
+                                 f"{os.getenv('GEMINI_MODEL', 'gemini-flash-latest')}:generateContent",
+                                 headers={"x-goog-api-key": key},
+                                 json={"systemInstruction": {"parts": [{"text": system}]},
+                                       "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                                       "generationConfig": {"maxOutputTokens": max_tokens, "temperature": 0.4}})
+                r.raise_for_status()
+                cands = r.json().get("candidates") or []
+                parts = (cands[0].get("content") or {}).get("parts", []) if cands else []
+                text = "".join(p.get("text", "") for p in parts)
+                if not text.strip():
+                    raise HTTPException(502, "L'IA n'a pas renvoyé de réponse. Réessaie.")
+                return text
             if provider == "anthropic":
                 key = os.getenv("ANTHROPIC_API_KEY")
                 if not key:
@@ -186,7 +214,8 @@ async def llm(prompt: str, system: str, provider: str | None, max_tokens: int = 
             msg = e.response.text[:200]
         raise HTTPException(502, f"{e.response.status_code} — {msg}")
     except httpx.HTTPError as e:
-        raise HTTPException(502, f"LLM indisponible ({type(e).__name__}). Vérifie qu'Ollama est lancé.")
+        hint = "Réessaie dans un instant." if PUBLIC_MODE else "Vérifie qu'Ollama est lancé."
+        raise HTTPException(502, f"LLM indisponible ({type(e).__name__}). {hint}")
 
 
 class Brief(BaseModel):
@@ -308,7 +337,7 @@ async def chat_stream(c: ChatIn):
     """Réponse en flux (NDJSON) : {"sources":[…]} puis {"t":"mot"}… puis {"done":true}. Erreur : {"error":"…"}."""
     import json
     sources, prompt = prepare_chat(c)  # lève 422 avant le début du flux
-    provider = c.provider or os.getenv("DEFAULT_PROVIDER", "ollama")
+    provider = provider_of(c.provider)
 
     async def gen():
         line = lambda o: json.dumps(o, ensure_ascii=False) + "\n"
@@ -339,7 +368,7 @@ async def chat_stream(c: ChatIn):
             yield line({"error": e.detail})
         except httpx.HTTPError as e:
             log.error("Flux LLM interrompu: %s", e)
-            yield line({"error": "L'IA est indisponible ou a été interrompue. Vérifie qu'Ollama est lancé."})
+            yield line({"error": "L'IA est indisponible ou a été interrompue. Réessaie dans un instant."})
 
     return StreamingResponse(gen(), media_type="application/x-ndjson; charset=utf-8")
 
@@ -351,7 +380,7 @@ def kb():
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "provider": os.getenv("DEFAULT_PROVIDER", "ollama")}
+    return {"status": "ok", "provider": provider_of(None), "public": PUBLIC_MODE}
 
 
 @app.get("/", response_class=HTMLResponse)
